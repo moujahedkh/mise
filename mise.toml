@@ -188,7 +188,6 @@ adopt = true
 "brew:llama.cpp" = { os = ["macos"] }
 "brew:moujahedkhouja/tap/pdf-minimizer" = { os = ["macos"] }
 "brew:neovim" = { os = ["macos"] }
-"brew:ollama" = { os = ["macos"] }
 "brew:omar16100/atlassian-cli/atlassian-cli" = { os = ["macos"] }
 "brew:pandoc" = { os = ["macos"] }
 "brew:pinentry-mac" = { os = ["macos"] }
@@ -216,22 +215,14 @@ adopt = true
 "brew:zsh-syntax-highlighting" = { os = ["macos"] }
 
 # --- casks ---
-"brew-cask:android-commandlinetools" = { version = "latest", os = ["macos"] }
-"brew-cask:android-platform-tools" = { version = "latest", os = ["macos"] }
 "brew-cask:btp" = { version = "latest", os = ["macos"] }
 "brew-cask:chatbox" = { version = "latest", os = ["macos"] }
 "brew-cask:copilot-cli" = { version = "latest", os = ["macos"] }
 "brew-cask:cyberduck" = { version = "latest", os = ["macos"] }
 "brew-cask:firefox" = { version = "latest", os = ["macos"] }
 "brew-cask:font-fira-code-nerd-font" = { version = "latest", os = ["macos"] }
-"brew-cask:freecad" = { version = "latest", os = ["macos"] }
 "brew-cask:ghostty" = { version = "latest", os = ["macos"] }
-"brew-cask:obsidian" = { version = "latest", os = ["macos"] }
-"brew-cask:orcaslicer" = { version = "latest", os = ["macos"] }
 "brew-cask:podman-desktop" = { version = "latest", os = ["macos"] }
-"brew-cask:prusaslicer" = { version = "latest", os = ["macos"] }
-"brew-cask:rancher" = { version = "latest", os = ["macos"] }
-"brew-cask:raycast" = { version = "latest", os = ["macos"] }
 "brew-cask:sublime-text" = { version = "latest", os = ["macos"] }
 "brew-cask:visual-studio-code" = { version = "latest", os = ["macos"] }
 
