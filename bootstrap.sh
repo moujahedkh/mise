@@ -28,16 +28,31 @@ mise --version
 # NOT on the default macOS PATH (/bin:/usr/bin:/usr/ucb:/usr/local/bin). Without
 # this, a new shell just says "mise: command not found" and you get no tools and
 # no [env]. ~/.zshenv is the right file: zsh reads it before .zprofile/.zshrc.
+#
+# The block also carries the two env vars every shell needs to load the
+# encrypted [env]: the `export MISE_EXPERIMENTAL=1` below only lives as long as
+# this script ("age encryption is experimental"), and mise's age decryption only
+# tries ~/.ssh/id_ed25519 and ~/.ssh/id_rsa ("No matching keys found").
+#
+# Rewritten on every run, not skipped when present, so machines that already
+# have an older block pick up new lines.
 ZSHENV="$HOME/.zshenv"
-MARKER="# >>> bootstrap.sh: mise on PATH >>>"
-if ! grep -qF "$MARKER" "$ZSHENV" 2>/dev/null; then
-  {
-    echo "$MARKER"
-    echo 'export PATH="$HOME/.local/bin:$PATH"'
-    echo "# <<< bootstrap.sh: mise on PATH <<<"
-  } >> "$ZSHENV"
-  echo "added ~/.local/bin to PATH in $ZSHENV"
-fi
+MARKER_BEGIN="# >>> bootstrap.sh: mise on PATH >>>"
+MARKER_END="# <<< bootstrap.sh: mise on PATH <<<"
+touch "$ZSHENV"
+awk -v b="$MARKER_BEGIN" -v e="$MARKER_END" '
+  $0 == b { skip = 1; next }
+  $0 == e { skip = 0; next }
+  !skip
+' "$ZSHENV" > "$ZSHENV.tmp" && mv "$ZSHENV.tmp" "$ZSHENV"
+{
+  echo "$MARKER_BEGIN"
+  echo 'export PATH="$HOME/.local/bin:$PATH"'
+  echo 'export MISE_EXPERIMENTAL=1'
+  echo 'export MISE_AGE_SSH_IDENTITY_FILES="$HOME/.ssh/mise_private_key"'
+  echo "$MARKER_END"
+} >> "$ZSHENV"
+echo "wrote mise block to $ZSHENV"
 
 # === phase 1: break the chicken-and-egg =====================================
 # The repo's mise.toml carries age-encrypted [env] values, and mise decrypts
@@ -104,7 +119,9 @@ fi
 echo "ssh key ok: $(ssh-keygen -lf "$KEY")"
 
 # === phase 2: the real bootstrap ============================================
-# key is in place, so the adopted config's [env] decrypts on load.
+# key is in place, so the adopted config's [env] decrypts on load -- provided
+# mise looks at it: the non-default name needs pointing at explicitly.
+export MISE_AGE_SSH_IDENTITY_FILES="$KEY"
 # clones repo -> ~/.config/mise, then packages -> repos -> tools -> bootstrap task.
 # NOTE: pulls from GitHub, so local mise.toml edits do nothing until pushed.
 mise bootstrap --adopt https://github.com/moujahedkh/mise.git --yes

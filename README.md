@@ -26,8 +26,10 @@ bash bootstrap.sh
 ## What it does
 
 1. **Installs mise** via `https://mise.run` and puts `~/.local/bin` plus the mise
-   shims on `PATH`. It also appends `~/.local/bin` to `PATH` in `~/.zshenv`, so
-   new shells can find `mise`.
+   shims on `PATH`. It also writes a block to `~/.zshenv` (rewritten on every
+   run) that puts `~/.local/bin` on `PATH` and sets `MISE_EXPERIMENTAL=1` and
+   `MISE_AGE_SSH_IDENTITY_FILES`, so new shells can find `mise` and decrypt the
+   `[env]` values.
 2. **Breaks the chicken-and-egg problem.** The adopted `mise.toml` holds
    age-encrypted `[env]` values, and mise decrypts them when the config loads.
    Without the key, every mise command that reads the config fails. The script
@@ -54,9 +56,10 @@ Bitwarden vault.
 
 - The key is stored as `~/.ssh/mise_private_key`, a non-default name. mise's
   age decryption only looks at `~/.ssh/id_ed25519` and `~/.ssh/id_rsa` by
-  default, so set `MISE_AGE_SSH_IDENTITY_FILES=~/.ssh/mise_private_key` or use
-  a default key name.
-- `mise bootstrap` is experimental; the script turns it on with
-  `MISE_EXPERIMENTAL=1`.
+  default, so the script sets `MISE_AGE_SSH_IDENTITY_FILES` (for the bootstrap
+  and in `~/.zshenv`). Without it, decryption fails with
+  `No matching keys found`.
+- `mise bootstrap` and age encryption are experimental; the script turns them
+  on with `MISE_EXPERIMENTAL=1` (for the bootstrap and in `~/.zshenv`).
 - Config changes take effect only after they are pushed, because `--adopt`
   clones from the remote.
