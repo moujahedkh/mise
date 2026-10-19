@@ -1,0 +1,164 @@
+# 01 Classic -- p10k classic, rounded: grey pills, thin round separators, frame, dotted fill
+# generated for Ghostty 'JetBrains Darcula' (bg #202020) + FiraCode Nerd Font Mono
+"$schema" = "https://starship.rs/config-schema.json"
+add_newline = true
+command_timeout = 500
+scan_timeout = 10
+palette = "classic"
+format = "[╭─](fg:frame)[](fg:seg)$os${env_var.STARSHIP_PWD}$git_branch$git_commit$git_state$git_status[](fg:seg)$fill[](fg:seg)$status$cmd_duration$jobs${python}${nodejs}${rust}${env_var.STARSHIP_GO}${env_var.STARSHIP_JAVA}${env_var.STARSHIP_GRADLE}${env_var.STARSHIP_MAVEN}${docker_context}${kubernetes}$time[](fg:seg)[─╮](fg:frame)$line_break[╰─](fg:frame)$character"
+
+[palettes.classic]
+seg = "#303030"
+sep = "#585858"
+frame = "#4e4e4e"
+text = "#adadad"
+os = "#eeeeee"
+dir = "#6d9df1"
+git = "#67ff4f"
+dirty = "#c2c300"
+lang = "#60d3d1"
+dur = "#c2c300"
+time = "#949494"
+ok = "#67ff4f"
+err = "#fa5355"
+
+[os]
+disabled = false
+style = "fg:os bg:seg"
+format = "[ $symbol]($style)"
+
+[os.symbols]
+Macos = " "
+Linux = " "
+Ubuntu = " "
+Debian = " "
+Arch = " "
+Fedora = " "
+Alpine = " "
+Redhat = " "
+Windows = " "
+Unknown = " "
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+read_only = " "
+disabled = true
+
+[git_branch]
+symbol = " "
+style = "fg:git bg:seg"
+format = "[](fg:sep bg:seg)[ $symbol$branch ]($style)"
+
+[git_commit]
+only_detached = true
+tag_disabled = false
+commit_hash_length = 7
+style = "fg:git bg:seg"
+format = "[](fg:sep bg:seg)[  $hash$tag ]($style)"
+
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
+conflicted = "~${count}"
+untracked = "?${count}"
+stashed = "*${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+style = "fg:dirty bg:seg"
+format = "([$all_status$ahead_behind ]($style))"
+
+[cmd_duration]
+min_time = 2000
+format = "[ $duration  ](fg:dur bg:seg)[](fg:sep bg:seg)"
+
+[status]
+disabled = false
+symbol = " "
+recognize_signal_code = true
+format = "[ $symbol$status ](fg:err bg:seg)[](fg:sep bg:seg)"
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[ $time  ](fg:time bg:seg)"
+
+[jobs]
+symbol = " "
+number_threshold = 1
+format = "[ $symbol$number ](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[python]
+symbol = " "
+version_format = "${raw}"
+format = "[ ${version}( $virtualenv) $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[nodejs]
+symbol = " "
+format = "[ ${version} $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[rust]
+symbol = " "
+format = "[ ${version} $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[env_var.STARSHIP_GO]
+symbol = " "
+format = "[ $env_value $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[env_var.STARSHIP_JAVA]
+symbol = " "
+format = "[ $env_value $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[env_var.STARSHIP_GRADLE]
+symbol = " "
+format = "[ $env_value $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[env_var.STARSHIP_MAVEN]
+symbol = " "
+format = "[ $env_value $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[docker_context]
+symbol = " "
+format = "[ $context $symbol](fg:lang bg:seg)[](fg:sep bg:seg)"
+
+[kubernetes]
+symbol = "☸ "
+disabled = false
+detect_env_vars = ["STARSHIP_KUBE"]
+format = "[ $context( \\($namespace\\)) $symbol]($style)[](fg:sep bg:seg)"
+style = "fg:lang bg:seg"
+
+[character]
+success_symbol = "[❯](bold fg:ok)"
+error_symbol = "[❯](bold fg:err)"
+vimcmd_symbol = "[❮](bold fg:ok)"
+
+[env_var.STARSHIP_PWD]
+style = "bold fg:dir bg:seg"
+format = "[](fg:sep bg:seg)[ $env_value ]($style)"
+
+[git_state]
+style = "fg:dirty bg:seg"
+format = "[\\($state\\) ]($style)"
+
+[fill]
+symbol = "·"
+style = "fg:frame"
+
+[[kubernetes.contexts]]
+context_pattern = ".*prod.*"
+style = "bold fg:#ffffff bg:#d70000"
+symbol = " PROD "
+
+[[kubernetes.contexts]]
+context_pattern = "^dev$"
+style = "fg:git bg:seg"
+
+[[kubernetes.contexts]]
+context_pattern = "^rancher-desktop$"
+context_alias = "local"
+style = "fg:lang bg:seg"

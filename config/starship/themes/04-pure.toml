@@ -1,0 +1,142 @@
+# 04 Pure -- sindresorhus/pure: quiet two-liner, dim right prompt
+# generated for Ghostty 'JetBrains Darcula' (bg #202020) + FiraCode Nerd Font Mono
+"$schema" = "https://starship.rs/config-schema.json"
+add_newline = true
+command_timeout = 500
+scan_timeout = 10
+palette = "pure"
+format = "$directory$git_branch$git_commit$git_state$git_status$cmd_duration${python}${nodejs}${rust}${env_var.STARSHIP_GO}${env_var.STARSHIP_JAVA}${env_var.STARSHIP_GRADLE}${env_var.STARSHIP_MAVEN}${docker_context}${kubernetes}$line_break$os$character"
+right_format = "$status$jobs$time"
+
+[palettes.pure]
+dir = "#6d9df1"
+git = "#808080"
+arrows = "#60d3d1"
+dirty = "#fb82ff"
+dur = "#c2c300"
+muted = "#585858"
+ok = "#fb82ff"
+err = "#fa5355"
+
+[os]
+disabled = false
+style = "fg:muted"
+format = "[$symbol]($style)"
+
+[os.symbols]
+Macos = " "
+Linux = " "
+Ubuntu = " "
+Debian = " "
+Arch = " "
+Fedora = " "
+Alpine = " "
+Redhat = " "
+Windows = " "
+Unknown = " "
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+truncation_symbol = "…/"
+read_only = " "
+style = "fg:dir"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = " "
+style = "fg:git"
+format = "[$branch]($style)"
+
+[git_commit]
+only_detached = true
+tag_disabled = false
+commit_hash_length = 7
+style = "fg:git"
+format = "[$hash$tag]($style)"
+
+[git_status]
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇡⇣"
+conflicted = "="
+untracked = "?"
+stashed = ""
+modified = "*"
+staged = "+"
+renamed = ""
+deleted = "*"
+style = "fg:arrows"
+format = "([$conflicted$modified$staged$untracked$renamed$deleted](fg:dirty)[ $ahead_behind]($style)) "
+
+[cmd_duration]
+min_time = 2000
+style = "fg:dur"
+format = "[$duration]($style) "
+
+[status]
+disabled = false
+symbol = " "
+recognize_signal_code = true
+style = "fg:err"
+format = "[$symbol$status]($style) "
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+style = "fg:muted"
+format = "[$time]($style)"
+
+[jobs]
+symbol = " "
+number_threshold = 1
+style = "fg:muted"
+format = "[$symbol$number]($style) "
+
+[python]
+symbol = " "
+version_format = "${raw}"
+format = "[$symbol${version}( $virtualenv)](fg:muted) "
+
+[nodejs]
+symbol = " "
+format = "[$symbol${version}](fg:muted) "
+
+[rust]
+symbol = " "
+format = "[$symbol${version}](fg:muted) "
+
+[env_var.STARSHIP_GO]
+symbol = " "
+format = "[$symbol$env_value](fg:muted) "
+
+[env_var.STARSHIP_JAVA]
+symbol = " "
+format = "[$symbol$env_value](fg:muted) "
+
+[env_var.STARSHIP_GRADLE]
+symbol = " "
+format = "[$symbol$env_value](fg:muted) "
+
+[env_var.STARSHIP_MAVEN]
+symbol = " "
+format = "[$symbol$env_value](fg:muted) "
+
+[docker_context]
+symbol = " "
+format = "[$symbol$context](fg:muted) "
+
+[kubernetes]
+symbol = "☸ "
+disabled = false
+detect_env_vars = ["STARSHIP_KUBE"]
+format = "[$symbol$context](fg:muted) "
+
+[character]
+success_symbol = "[❯](bold fg:ok)"
+error_symbol = "[❯](bold fg:err)"
+vimcmd_symbol = "[❮](bold fg:ok)"
+
+[git_state]
+style = "fg:git"
+format = " [$state]($style)"

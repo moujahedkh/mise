@@ -1,0 +1,137 @@
+# 07 Rounded -- separate round pills, single line + right prompt
+# generated for Ghostty 'JetBrains Darcula' (bg #202020) + FiraCode Nerd Font Mono
+"$schema" = "https://starship.rs/config-schema.json"
+add_newline = true
+command_timeout = 500
+scan_timeout = 10
+palette = "rounded"
+format = "$os$directory$git_branch$git_commit$git_state$git_status$character"
+right_format = "$status$cmd_duration$jobs${python}${nodejs}${rust}${env_var.STARSHIP_GO}${env_var.STARSHIP_JAVA}${env_var.STARSHIP_GRADLE}${env_var.STARSHIP_MAVEN}${docker_context}${kubernetes}$time"
+
+[palettes.rounded]
+dark = "#202020"
+light = "#eeeeee"
+os = "#adadad"
+dir = "#6d9df1"
+git = "#67ff4f"
+dirty = "#c2c300"
+lang = "#60d3d1"
+dur = "#ffd75f"
+status = "#fb7172"
+time = "#444444"
+ok = "#67ff4f"
+err = "#fa5355"
+
+[os]
+disabled = false
+format = "[](fg:os)[$symbol](fg:dark bg:os)[](fg:os) "
+
+[os.symbols]
+Macos = " "
+Linux = " "
+Ubuntu = " "
+Debian = " "
+Arch = " "
+Fedora = " "
+Alpine = " "
+Redhat = " "
+Windows = " "
+Unknown = " "
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+read_only = " "
+read_only_style = "fg:err bg:dir"
+format = "[](fg:dir)[$path[$read_only]($read_only_style)](fg:dark bg:dir)[](fg:dir) "
+
+[git_branch]
+symbol = " "
+format = "[](fg:git)[$symbol$branch](fg:dark bg:git)[](fg:git) "
+
+[git_commit]
+only_detached = true
+tag_disabled = false
+commit_hash_length = 7
+format = "[](fg:git)[ $hash$tag](fg:dark bg:git)[](fg:git) "
+
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
+conflicted = "~${count}"
+untracked = "?${count}"
+stashed = "*${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+format = "([](fg:dirty)[$all_status$ahead_behind](fg:dark bg:dirty)[](fg:dirty) )"
+
+[cmd_duration]
+min_time = 2000
+format = "[](fg:dur)[ $duration](fg:dark bg:dur)[](fg:dur) "
+
+[status]
+disabled = false
+symbol = " "
+recognize_signal_code = true
+format = "[](fg:status)[$symbol$status](fg:dark bg:status)[](fg:status) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+format = "[](fg:time)[ $time](fg:light bg:time)[](fg:time)"
+
+[jobs]
+symbol = " "
+number_threshold = 1
+format = "[](fg:lang)[$symbol$number](fg:dark bg:lang)[](fg:lang) "
+
+[python]
+symbol = " "
+version_format = "${raw}"
+format = "[](fg:lang)[$symbol${version}( $virtualenv)](fg:dark bg:lang)[](fg:lang) "
+
+[nodejs]
+symbol = " "
+format = "[](fg:lang)[$symbol${version}](fg:dark bg:lang)[](fg:lang) "
+
+[rust]
+symbol = " "
+format = "[](fg:lang)[$symbol${version}](fg:dark bg:lang)[](fg:lang) "
+
+[env_var.STARSHIP_GO]
+symbol = " "
+format = "[](fg:lang)[$symbol$env_value](fg:dark bg:lang)[](fg:lang) "
+
+[env_var.STARSHIP_JAVA]
+symbol = " "
+format = "[](fg:lang)[$symbol$env_value](fg:dark bg:lang)[](fg:lang) "
+
+[env_var.STARSHIP_GRADLE]
+symbol = " "
+format = "[](fg:lang)[$symbol$env_value](fg:dark bg:lang)[](fg:lang) "
+
+[env_var.STARSHIP_MAVEN]
+symbol = " "
+format = "[](fg:lang)[$symbol$env_value](fg:dark bg:lang)[](fg:lang) "
+
+[docker_context]
+symbol = " "
+format = "[](fg:lang)[$symbol$context](fg:dark bg:lang)[](fg:lang) "
+
+[kubernetes]
+symbol = "☸ "
+disabled = false
+detect_env_vars = ["STARSHIP_KUBE"]
+format = "[](fg:lang)[$symbol$context](fg:dark bg:lang)[](fg:lang) "
+
+[character]
+success_symbol = "[❯](bold fg:ok)"
+error_symbol = "[❯](bold fg:err)"
+vimcmd_symbol = "[❮](bold fg:ok)"
+
+[git_state]
+format = "[](fg:dirty)[$state](fg:dark bg:dirty)[](fg:dirty) "

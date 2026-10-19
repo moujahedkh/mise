@@ -79,20 +79,23 @@ enabled = true
 
 [bootstrap.hooks.final]
 run = '''
-# starship config lives in this repo; link it, keeping any hand-made file aside
-STARSHIP_SRC="$HOME/.config/mise/config/starship.toml"
-STARSHIP_DST="$HOME/.config/starship.toml"
-if [ "$(readlink "$STARSHIP_DST" 2>/dev/null)" = "$STARSHIP_SRC" ]; then
-  echo "starship config: already linked"
-else
-  if [ -e "$STARSHIP_DST" ] || [ -L "$STARSHIP_DST" ]; then
-    mv "$STARSHIP_DST" "$STARSHIP_DST.bak-$(date +%Y%m%d%H%M%S)"
-    echo "starship config: moved existing file to $STARSHIP_DST.bak-*"
+# starship config lives in this repo; link it, keeping any hand-made file aside.
+# config/starship/ holds the themes, `starship-theme` and project-prompt.zsh.
+link_config() {
+  if [ "$(readlink "$2" 2>/dev/null)" = "$1" ]; then
+    echo "starship config: $2 already linked"
+    return
+  fi
+  if [ -e "$2" ] || [ -L "$2" ]; then
+    mv "$2" "$2.bak-$(date +%Y%m%d%H%M%S)"
+    echo "starship config: moved existing $2 to $2.bak-*"
   fi
   mkdir -p "$HOME/.config"
-  ln -s "$STARSHIP_SRC" "$STARSHIP_DST"
-  echo "starship config: linked $STARSHIP_DST"
-fi
+  ln -s "$1" "$2"
+  echo "starship config: linked $2"
+}
+link_config "$HOME/.config/mise/config/starship.toml" "$HOME/.config/starship.toml"
+link_config "$HOME/.config/mise/config/starship" "$HOME/.config/starship"
 
 ZSHRC="$HOME/.zshrc"
 if grep -qF "# >>> mise bootstrap: shell init >>>" "$ZSHRC" 2>/dev/null; then
@@ -131,7 +134,12 @@ alias ..="cd .."
 alias ...="cd ../.."
 
 command -v zoxide   >/dev/null && eval "$(zoxide init zsh)"
+# starship-theme <nr|name> switches themes; project-prompt.zsh feeds the prompt
+# kube context (kubectl/helm typed, k8s projects, always on prod), java/gradle/
+# maven/go also in subdirs, and the path, shortened only when the line overflows
+[ -r ~/.config/starship/starship-theme.zsh ] && source ~/.config/starship/starship-theme.zsh
 command -v starship >/dev/null && eval "$(starship init zsh)"
+[ -r ~/.config/starship/project-prompt.zsh ] && source ~/.config/starship/project-prompt.zsh
 
 # Syntax highlighting, then history-substring-search (its README: after highlighting)
 [ -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

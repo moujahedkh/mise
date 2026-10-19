@@ -1,0 +1,146 @@
+# 06 Neon -- cyberpunk: neon blocks, slanted cuts, magenta frame
+# generated for Ghostty 'JetBrains Darcula' (bg #202020) + FiraCode Nerd Font Mono
+"$schema" = "https://starship.rs/config-schema.json"
+add_newline = true
+command_timeout = 500
+scan_timeout = 10
+palette = "neon"
+format = "[╭─](fg:frame)$os$directory($git_branch$git_commit$git_state$git_status[](fg:yellow))$fill[](fg:panel)$status$cmd_duration$jobs${python}${nodejs}${rust}${env_var.STARSHIP_GO}${env_var.STARSHIP_JAVA}${env_var.STARSHIP_GRADLE}${env_var.STARSHIP_MAVEN}${docker_context}${kubernetes}$time[](fg:panel)$line_break[╰─](fg:frame)$character"
+
+[palettes.neon]
+black = "#0a0a0a"
+panel = "#1a1a2e"
+frame = "#bc13fe"
+pink = "#ff2bd6"
+cyan = "#00f0ff"
+yellow = "#f9f002"
+green = "#39ff14"
+red = "#ff073a"
+ok = "#39ff14"
+err = "#ff073a"
+
+[os]
+disabled = false
+format = "[ $symbol](fg:black bg:pink)[](fg:pink bg:cyan)"
+
+[os.symbols]
+Macos = " "
+Linux = " "
+Ubuntu = " "
+Debian = " "
+Arch = " "
+Fedora = " "
+Alpine = " "
+Redhat = " "
+Windows = " "
+Unknown = " "
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+read_only = " "
+style = "fg:black bg:cyan"
+read_only_style = "fg:err bg:cyan"
+format = "[ $path ]($style)[$read_only ]($read_only_style)[](fg:cyan)"
+repo_root_style = "bold fg:black bg:cyan"
+before_repo_root_style = "fg:black bg:cyan"
+repo_root_format = "[ $before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path ]($style)[$read_only ]($read_only_style)[](fg:cyan bg:yellow)"
+
+[git_branch]
+symbol = " "
+style = "fg:black bg:yellow"
+format = "[ $symbol$branch ]($style)"
+
+[git_commit]
+only_detached = true
+tag_disabled = false
+commit_hash_length = 7
+style = "fg:black bg:yellow"
+format = "[  $hash$tag ]($style)"
+
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
+conflicted = "~${count}"
+untracked = "?${count}"
+stashed = "*${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+style = "bold fg:black bg:yellow"
+format = "([$all_status$ahead_behind ]($style))"
+
+[cmd_duration]
+min_time = 2000
+format = "[  $duration ](fg:yellow bg:panel)[╱](fg:frame bg:panel)"
+
+[status]
+disabled = false
+symbol = " "
+recognize_signal_code = true
+format = "[ $symbol$status ](bold fg:red bg:panel)[╱](fg:frame bg:panel)"
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[ $time  ](fg:pink bg:panel)"
+
+[jobs]
+symbol = " "
+number_threshold = 1
+format = "[ $symbol$number ](fg:cyan bg:panel)[╱](fg:frame bg:panel)"
+
+[python]
+symbol = " "
+version_format = "${raw}"
+format = "[ $symbol${version}( $virtualenv) ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[nodejs]
+symbol = " "
+format = "[ $symbol${version} ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[rust]
+symbol = " "
+format = "[ $symbol${version} ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[env_var.STARSHIP_GO]
+symbol = " "
+format = "[ $symbol$env_value ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[env_var.STARSHIP_JAVA]
+symbol = " "
+format = "[ $symbol$env_value ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[env_var.STARSHIP_GRADLE]
+symbol = " "
+format = "[ $symbol$env_value ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[env_var.STARSHIP_MAVEN]
+symbol = " "
+format = "[ $symbol$env_value ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[docker_context]
+symbol = " "
+format = "[ $symbol$context ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[kubernetes]
+symbol = "☸ "
+disabled = false
+detect_env_vars = ["STARSHIP_KUBE"]
+format = "[ $symbol$context ](fg:green bg:panel)[╱](fg:frame bg:panel)"
+
+[character]
+success_symbol = "[❯❯](bold fg:pink)"
+error_symbol = "[❯❯](bold fg:err)"
+vimcmd_symbol = "[❮](bold fg:ok)"
+
+[git_state]
+style = "fg:black bg:yellow"
+format = "[\\($state $progress_current/$progress_total\\) ]($style)"
+
+[fill]
+symbol = "─"
+style = "fg:frame"
