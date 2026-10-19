@@ -36,8 +36,8 @@ bash bootstrap.sh
 3. **Fetches the SSH key** (used as the age identity) from Bitwarden into
    `~/.ssh/mise_private_key` with mode `600`, and checks it is a valid key.
 4. **Runs the real bootstrap:**
-   `mise bootstrap --adopt <config-repo> --yes`. This clones
-   the config into `~/.config/mise`, then applies packages, repos, tools and the
+   `mise bootstrap --adopt https://github.com/moujahedkh/mise.git --yes`. This
+   clones the config into `~/.config/mise`, then applies packages, repos, tools and the
    `bootstrap` task.
 
 The script can be run again: it handles an already logged-in or unlocked
@@ -49,19 +49,13 @@ Bitwarden vault.
 - A Bitwarden account with two secure notes:
   - `mise-bootstrap-private-ssh-key`
   - `mise-bootstrap-public-ssh-key`
-- SSH read access to the config repository passed to `--adopt`.
 
 ## Known caveats
 
-- The key is stored as `~/.ssh/mise_private_key`, a non-default name. Neither
-  ssh (for the `git@` clone) nor mise's age decryption (default
-  `~/.ssh/id_ed25519`, `~/.ssh/id_rsa`) picks it up on its own. Set
-  `GIT_SSH_COMMAND="ssh -i ~/.ssh/mise_private_key -o IdentitiesOnly=yes"` and
-  `MISE_AGE_SSH_IDENTITY_FILES=~/.ssh/mise_private_key`, or use a default key
-  name.
-- On a fresh machine, the git host is not yet in `~/.ssh/known_hosts`, so
-  the clone stops at the host-key prompt. Add it first (for example with
-  `ssh-keyscan`, then check the fingerprint against the host's published one).
+- The key is stored as `~/.ssh/mise_private_key`, a non-default name. mise's
+  age decryption only looks at `~/.ssh/id_ed25519` and `~/.ssh/id_rsa` by
+  default, so set `MISE_AGE_SSH_IDENTITY_FILES=~/.ssh/mise_private_key` or use
+  a default key name.
 - `mise bootstrap` is experimental; the script turns it on with
   `MISE_EXPERIMENTAL=1`.
 - Config changes take effect only after they are pushed, because `--adopt`
