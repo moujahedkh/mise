@@ -81,10 +81,21 @@ cd "$TMPDIR_BOOT"
 # every bw call runs under the empty config, never the secret-bearing one
 bw() { MISE_GLOBAL_CONFIG_FILE="$EMPTY_CONF" mise x bitwarden@latest -- bw "$@"; }
 
-# macOS 15+ ships /usr/bin/jq; older releases do not. Fall back to a mise-fetched
-# jq, under the empty config for the same reason as bw.
+# macOS 15+ ships /usr/bin/jq; older releases do not. Install it with Homebrew
+# when brew is there; otherwise fall back to a mise-fetched jq, under the empty
+# config for the same reason as bw.
 if ! command -v jq >/dev/null 2>&1; then
-  jq() { MISE_GLOBAL_CONFIG_FILE="$EMPTY_CONF" mise x jq@latest -- jq "$@"; }
+  # brew is not on PATH in a non-login shell; try the default prefixes
+  for prefix in /opt/homebrew /usr/local; do
+    if ! command -v brew >/dev/null 2>&1 && [ -x "$prefix/bin/brew" ]; then
+      eval "$("$prefix/bin/brew" shellenv)"
+    fi
+  done
+  if command -v brew >/dev/null 2>&1; then
+    brew install jq
+  else
+    jq() { MISE_GLOBAL_CONFIG_FILE="$EMPTY_CONF" mise x jq@latest -- jq "$@"; }
+  fi
 fi
 jq --version
 
