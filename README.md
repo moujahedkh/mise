@@ -45,12 +45,82 @@ bash bootstrap.sh
 The script can be run again: it handles an already logged-in or unlocked
 Bitwarden vault.
 
+## Configuration
+
+`mise.toml` is the global config that `--adopt` clones into `~/.config/mise`.
+It is modeled on Josh Long's
+[`mise.toml`](https://github.com/joshlong/mise/blob/main/mise.toml) and holds:
+
+- `[tools]`: tools managed by mise (Java, Node, jq, Bitwarden CLI).
+- `[env]`: Homebrew's `shellenv` variables, `EDITOR`, and age-encrypted secrets.
+- `[shell_alias]`: `eza` and `git` aliases.
+- `[bootstrap.packages]` and `[bootstrap.brew.taps]`: Homebrew formulae, casks
+  and taps.
+- `[bootstrap.hooks.final]`: writes a zsh setup block (history, completion,
+  fzf, fzf-tab, zoxide, starship, atuin, plugins) into `~/.zshrc`. It skips
+  a `~/.zshrc` that already has the block or its own `starship init`.
+- `[tasks.bootstrap]`: post-install sanity checks.
+
+## Day-to-day use
+
+After the bootstrap, `~/.config/mise` is a git checkout of this repo. Run these
+commands from a shell where mise is set up.
+
+### Check packages
+
+Show which packages from the config are missing:
+
+```bash
+mise bootstrap packages status
+```
+
+### Reinstall removed packages
+
+If you removed a Homebrew package by hand and want mise to bring it back:
+
+```bash
+mise bootstrap packages apply --yes
+```
+
+### Import packages added with Homebrew
+
+If you installed packages with Homebrew directly and want to add them to the
+global mise config:
+
+```bash
+mise bootstrap packages import --manager brew --global
+```
+
+This records each linked formula you installed yourself. Add `--all` to include
+formulae installed only as dependencies. Without `--global`, mise writes to the
+local config instead.
+
+### Add an encrypted secret
+
+```bash
+mise set --global --age-encrypt --age-ssh-recipient ~/.ssh/mise_private_key.pub --prompt MY_KEY
+```
+
+This encrypts the value for the bootstrap SSH key and writes it to the global
+config. Without `--global`, mise writes to the nearest config, creating
+`mise.toml` in the current directory if none exists. `--prompt` asks for the
+value after you press Enter, with masked input, so the raw secret never ends up
+in your shell history.
+
+### Share changes
+
+Edits to `~/.config/mise` take effect on this machine right away. To get them
+to other machines, commit and push them from `~/.config/mise`, then run
+`git pull` there on each machine that is already set up.
+
 ## Requirements
 
 - macOS with zsh, `curl` and `ssh-keygen`.
-- A Bitwarden account with two secure notes:
-  - `mise-bootstrap-private-ssh-key`
-  - `mise-bootstrap-public-ssh-key`
+- `jq`. macOS 15+ ships `/usr/bin/jq`. On older releases the script installs it
+  with Homebrew if `brew` is available, and otherwise runs it through `mise x`.
+- A Bitwarden account with one SSH key item named
+  `mise-bootstrap-private-ssh-key`. The script reads both the private and the
+  public key from it.
 
 ## Known caveats
 
@@ -61,5 +131,5 @@ Bitwarden vault.
   `No matching keys found`.
 - `mise bootstrap` and age encryption are experimental; the script turns them
   on with `MISE_EXPERIMENTAL=1` (for the bootstrap and in `~/.zshenv`).
-- Config changes take effect only after they are pushed, because `--adopt`
-  clones from the remote.
+- A new machine gets only config changes that have been pushed, because
+  `--adopt` clones from the remote.
