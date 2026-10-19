@@ -1,0 +1,248 @@
+# Global mise config, adopted into ~/.config/mise by bootstrap.sh.
+# Modeled on https://github.com/joshlong/mise/blob/main/mise.toml
+
+min_version = "2026.10.13"
+
+# Mask these in captured task output. (Does not encrypt the file.)
+redactions = [
+  "*_ACCESS_KEY",
+  "*_ACCESS_TOKEN",
+  "*_API_KEY",
+  "*_AUTH_HEADER",
+  "*_SECRET_KEY",
+  "*_TOKEN",
+]
+
+[settings]
+experimental = true
+
+[settings.age]
+ssh_identity_files = ["~/.ssh/mise_private_key"]
+
+# ---------------------------------------------------------------- tools ----
+
+[tools]
+bitwarden = "latest"
+java = "zulu-25"
+jq = "latest"
+node = "24"
+
+# ------------------------------------------------- environment variables ----
+
+[env]
+# Prepended to PATH, highest precedence first.
+_.path = [
+  "{{env.HOME}}/.local/bin",
+  "{{env.HOME}}/Library/Application Support/JetBrains/Toolbox/scripts",
+  # brew shellenv's PATH half
+  "/opt/homebrew/bin",
+  "/opt/homebrew/sbin",
+]
+
+# rest of brew shellenv (its fpath half is in the final hook)
+HOMEBREW_PREFIX = "/opt/homebrew"
+HOMEBREW_CELLAR = "/opt/homebrew/Cellar"
+HOMEBREW_REPOSITORY = "/opt/homebrew"
+INFOPATH = "/opt/homebrew/share/info"
+
+EDITOR = "nvim"
+VISUAL = "nvim"
+
+# Encrypted secrets go here. Add one with (see README):
+#   mise set --global --age-encrypt --age-ssh-recipient ~/.ssh/mise_private_key.pub --prompt MY_KEY
+# MY_KEY = { age = "..." }
+
+# ---------------------------------------------------------- shell aliases ----
+# Applied by `mise activate` on directory entry (bash/zsh/fish only).
+
+[shell_alias]
+ll = "eza -lah --group-directories-first --icons --git"
+la = "eza -a --icons"
+lt = "eza --tree --level=2 --icons"
+ls = "eza --icons"
+g = "git"
+gs = "git status -sb"
+gl = "git log --oneline --graph --decorate -20"
+
+# ------------------------------------------------------- shell activation ----
+# Without this, nothing writes mise into ~/.zshrc, so a new shell has no mise,
+# no tools and no [env]. It writes two managed blocks:
+#
+# ~/.zprofile (--shims, for login/non-interactive)
+# ~/.zshrc (activate, for interactive)
+#
+# Both call bare `mise`, which is why bootstrap.sh puts ~/.local/bin on PATH via
+# ~/.zshenv first.
+
+[bootstrap.mise_shell_activate.zsh]
+enabled = true
+
+[bootstrap.hooks.final]
+run = '''
+ZSHRC="$HOME/.zshrc"
+if grep -qF "# >>> mise bootstrap: shell init >>>" "$ZSHRC" 2>/dev/null; then
+  echo "shell init: already wired"
+elif grep -qF "starship init zsh" "$ZSHRC" 2>/dev/null; then
+  # an existing, hand-written setup: leave it alone instead of doubling it up
+  echo "shell init: $ZSHRC already has a prompt setup, skipped"
+else
+  cat >> "$ZSHRC" <<'RC'
+
+# >>> mise bootstrap: shell init >>>
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
+
+BREW_PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
+
+# Completion (zsh-completions must be on fpath before compinit)
+fpath+=("$BREW_PREFIX/share/zsh-completions" "$BREW_PREFIX/share/zsh/site-functions" "$HOME/.zsh/completions")
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'   # case-insensitive
+zstyle ':completion:*' menu no                            # fzf-tab draws the menu
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':fzf-tab:*' fzf-flags --height=40%
+zstyle ':fzf-tab:complete:(cd|z|zi):*' fzf-preview 'eza -1 --icons --color=always $realpath'
+
+# fzf keybindings: ctrl+t files, alt+c dirs (ctrl+r is replaced by atuin below)
+command -v fzf >/dev/null && source <(fzf --zsh)
+
+# fzf-tab: after compinit and after fzf --zsh (it must own Tab), before autosuggestions
+[ -r "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ] && source "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
+[ -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+alias ..="cd .."
+alias ...="cd ../.."
+
+command -v zoxide   >/dev/null && eval "$(zoxide init zsh)"
+command -v starship >/dev/null && eval "$(starship init zsh)"
+
+# Syntax highlighting, then history-substring-search (its README: after highlighting)
+[ -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ -r "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]; then
+  source "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+  bindkey '^[OA' history-substring-search-up
+  bindkey '^[OB' history-substring-search-down
+fi
+
+# atuin: ctrl+r history search; up arrow stays with substring search
+command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+# <<< mise bootstrap: shell init <<<
+RC
+  echo "shell init: wired $ZSHRC"
+fi
+'''
+
+# ------------------------------------------------------------ brew taps ----
+# mise resolves tapped formulae/casks itself; Homebrew need not be installed.
+# Adopt apps already sitting in /Applications instead of failing on them.
+[bootstrap.brew]
+adopt = true
+
+[bootstrap.brew.taps]
+"atlassian/acli" = "https://github.com/atlassian/homebrew-acli.git"
+"avivsinai/tap" = "https://github.com/avivsinai/homebrew-tap.git"
+"moujahedkhouja/tap" = "https://github.com/moujahedkhouja/homebrew-tap.git"
+"omar16100/atlassian-cli" = "https://github.com/omar16100/homebrew-atlassian-cli.git"
+"tabbyml/tabby" = "https://github.com/tabbyml/homebrew-tabby.git"
+
+# ------------------------------------------------------- system packages ----
+
+[bootstrap.packages]
+
+# --- formulae ---
+"brew:age" = { os = ["macos"] }
+"brew:argocd" = { os = ["macos"] }
+"brew:atlassian/acli/acli" = { os = ["macos"] }
+"brew:atuin" = { os = ["macos"] }
+"brew:avivsinai/tap/bitbucket-cli" = { os = ["macos"] }
+"brew:bat" = { os = ["macos"] }
+"brew:bitwarden-cli" = { os = ["macos"] }
+"brew:cmake" = { os = ["macos"] }
+"brew:docker" = { os = ["macos"] }
+"brew:docker-buildx" = { os = ["macos"] }
+"brew:docker-credential-helper" = { os = ["macos"] }
+"brew:dos2unix" = { os = ["macos"] }
+"brew:eza" = { os = ["macos"] }
+"brew:ffmpeg" = { os = ["macos"] }
+"brew:fzf" = { os = ["macos"] }
+"brew:fzf-tab" = { os = ["macos"] }
+"brew:gh" = { os = ["macos"] }
+"brew:ghostscript" = { os = ["macos"] }
+"brew:golangci-lint" = { os = ["macos"] }
+"brew:gradle" = { os = ["macos"] }
+"brew:helm" = { os = ["macos"] }
+"brew:imagemagick" = { os = ["macos"] }
+"brew:istioctl" = { os = ["macos"] }
+"brew:jenv" = { os = ["macos"] }
+"brew:just" = { os = ["macos"] }
+"brew:kotlin" = { os = ["macos"] }
+"brew:kubectx" = { os = ["macos"] }
+"brew:kubernetes-cli" = { os = ["macos"] }
+"brew:kubeseal" = { os = ["macos"] }
+"brew:kyma-cli" = { os = ["macos"] }
+"brew:libimobiledevice" = { os = ["macos"] }
+"brew:llama.cpp" = { os = ["macos"] }
+"brew:moujahedkhouja/tap/pdf-minimizer" = { os = ["macos"] }
+"brew:neovim" = { os = ["macos"] }
+"brew:ollama" = { os = ["macos"] }
+"brew:omar16100/atlassian-cli/atlassian-cli" = { os = ["macos"] }
+"brew:pandoc" = { os = ["macos"] }
+"brew:pinentry-mac" = { os = ["macos"] }
+"brew:pipx" = { os = ["macos"] }
+"brew:podman" = { os = ["macos"] }
+"brew:poppler" = { os = ["macos"] }
+"brew:qpdf" = { os = ["macos"] }
+"brew:rtk" = { os = ["macos"] }
+"brew:sops" = { os = ["macos"] }
+"brew:starship" = { os = ["macos"] }
+"brew:tabbyml/tabby/tabby" = { os = ["macos"] }
+"brew:tmux" = { os = ["macos"] }
+"brew:tree" = { os = ["macos"] }
+"brew:uv" = { os = ["macos"] }
+"brew:wget" = { os = ["macos"] }
+"brew:whisper.cpp" = { os = ["macos"] }
+"brew:wimlib" = { os = ["macos"] }
+"brew:xcodegen" = { os = ["macos"] }
+"brew:yarn" = { os = ["macos"] }
+"brew:yq" = { os = ["macos"] }
+"brew:zoxide" = { os = ["macos"] }
+"brew:zsh-autosuggestions" = { os = ["macos"] }
+"brew:zsh-completions" = { os = ["macos"] }
+"brew:zsh-history-substring-search" = { os = ["macos"] }
+"brew:zsh-syntax-highlighting" = { os = ["macos"] }
+
+# --- casks ---
+"brew-cask:android-commandlinetools" = { version = "latest", os = ["macos"] }
+"brew-cask:android-platform-tools" = { version = "latest", os = ["macos"] }
+"brew-cask:btp" = { version = "latest", os = ["macos"] }
+"brew-cask:chatbox" = { version = "latest", os = ["macos"] }
+"brew-cask:copilot-cli" = { version = "latest", os = ["macos"] }
+"brew-cask:cyberduck" = { version = "latest", os = ["macos"] }
+"brew-cask:firefox" = { version = "latest", os = ["macos"] }
+"brew-cask:font-fira-code-nerd-font" = { version = "latest", os = ["macos"] }
+"brew-cask:freecad" = { version = "latest", os = ["macos"] }
+"brew-cask:ghostty" = { version = "latest", os = ["macos"] }
+"brew-cask:obsidian" = { version = "latest", os = ["macos"] }
+"brew-cask:orcaslicer" = { version = "latest", os = ["macos"] }
+"brew-cask:podman-desktop" = { version = "latest", os = ["macos"] }
+"brew-cask:prusaslicer" = { version = "latest", os = ["macos"] }
+"brew-cask:rancher" = { version = "latest", os = ["macos"] }
+"brew-cask:raycast" = { version = "latest", os = ["macos"] }
+"brew-cask:sublime-text" = { version = "latest", os = ["macos"] }
+"brew-cask:visual-studio-code" = { version = "latest", os = ["macos"] }
+
+# ----------------------------------------------------------------- task ----
+
+[tasks.bootstrap]
+description = "Post-install sanity checks"
+run = """
+echo "java:      $(java --version 2>&1 | head -1)"
+echo "node:      $(node --version 2>&1)"
+echo "editor:    $EDITOR"
+command -v starship >/dev/null && echo "starship:  ok" || echo "starship:  MISSING"
+[ -r ~/.ssh/mise_private_key ] && echo "age key:   ok" || echo "age key:   MISSING"
+"""
