@@ -66,9 +66,16 @@ cd "$TMPDIR_BOOT"
 # every bw call runs under the empty config, never the secret-bearing one
 bw() { MISE_GLOBAL_CONFIG_FILE="$EMPTY_CONF" mise x bitwarden@latest -- bw "$@"; }
 
+# macOS 15+ ships /usr/bin/jq; older releases do not. Fall back to a mise-fetched
+# jq, under the empty config for the same reason as bw.
+if ! command -v jq >/dev/null 2>&1; then
+  jq() { MISE_GLOBAL_CONFIG_FILE="$EMPTY_CONF" mise x jq@latest -- jq "$@"; }
+fi
+jq --version
+
 # `bw login` exits 1 if already logged in, so branch on status -- this script
 # has to be re-runnable.
-BW_STATUS="$(bw status | sed -n 's/.*"status":"\([^"]*\)".*/\1/p')"
+BW_STATUS="$(bw status | jq -r '.status')"
 if [ "$BW_STATUS" = "unauthenticated" ]; then
   bw login   # interactive; do NOT capture, or the prompts get swallowed
 fi
@@ -84,8 +91,8 @@ mkdir -p ~/.ssh
 KEY=$HOME/.ssh/mise_private_key
 # create with tight perms *before* writing, so the key is never world-readable
 install -m 600 /dev/null "$KEY"
-bw get notes "mise-bootstrap-private-ssh-key" > "$KEY"
-bw get notes "mise-bootstrap-public-ssh-key"  > "$KEY.pub"
+bw get item mise-bootstrap-private-ssh-key | jq -r '.sshKey.privateKey' > "$KEY"
+bw get item mise-bootstrap-private-ssh-key | jq -r '.sshKey.publicKey'  > "$KEY.pub"
 chmod 644 "$KEY.pub"
 
 # a failed `bw get` yields an EMPTY file, not an error the eye catches -- and an
