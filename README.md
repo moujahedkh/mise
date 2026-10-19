@@ -56,7 +56,9 @@ It is modeled on Josh Long's
 - `[shell_alias]`: `eza` and `git` aliases.
 - `[bootstrap.packages]` and `[bootstrap.brew.taps]`: Homebrew formulae, casks
   and taps.
-- `[bootstrap.hooks.final]`: writes a zsh setup block (history, completion,
+- `[bootstrap.hooks.final]`: links `~/.config/starship.toml` to
+  `config/starship.toml` in this repo (an existing file is moved to
+  `starship.toml.bak-<timestamp>` first), then writes a zsh setup block (history, completion,
   fzf, fzf-tab, zoxide, starship, atuin, plugins) into `~/.zshrc`. It skips
   a `~/.zshrc` that already has the block or its own `starship init`.
 - `[tasks.bootstrap]`: post-install sanity checks.

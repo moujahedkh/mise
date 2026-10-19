@@ -79,6 +79,21 @@ enabled = true
 
 [bootstrap.hooks.final]
 run = '''
+# starship config lives in this repo; link it, keeping any hand-made file aside
+STARSHIP_SRC="$HOME/.config/mise/config/starship.toml"
+STARSHIP_DST="$HOME/.config/starship.toml"
+if [ "$(readlink "$STARSHIP_DST" 2>/dev/null)" = "$STARSHIP_SRC" ]; then
+  echo "starship config: already linked"
+else
+  if [ -e "$STARSHIP_DST" ] || [ -L "$STARSHIP_DST" ]; then
+    mv "$STARSHIP_DST" "$STARSHIP_DST.bak-$(date +%Y%m%d%H%M%S)"
+    echo "starship config: moved existing file to $STARSHIP_DST.bak-*"
+  fi
+  mkdir -p "$HOME/.config"
+  ln -s "$STARSHIP_SRC" "$STARSHIP_DST"
+  echo "starship config: linked $STARSHIP_DST"
+fi
+
 ZSHRC="$HOME/.zshrc"
 if grep -qF "# >>> mise bootstrap: shell init >>>" "$ZSHRC" 2>/dev/null; then
   echo "shell init: already wired"
@@ -235,5 +250,6 @@ echo "java:      $(java --version 2>&1 | head -1)"
 echo "node:      $(node --version 2>&1)"
 echo "editor:    $EDITOR"
 command -v starship >/dev/null && echo "starship:  ok" || echo "starship:  MISSING"
+[ "$(readlink ~/.config/starship.toml)" = "$HOME/.config/mise/config/starship.toml" ] && echo "prompt:    linked" || echo "prompt:    NOT LINKED"
 [ -r ~/.ssh/mise_private_key ] && echo "age key:   ok" || echo "age key:   MISSING"
 """
