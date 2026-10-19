@@ -36,7 +36,7 @@ bash bootstrap.sh
 3. **Fetches the SSH key** (used as the age identity) from Bitwarden into
    `~/.ssh/mise_private_key` with mode `600`, and checks it is a valid key.
 4. **Runs the real bootstrap:**
-   `mise bootstrap --adopt git@bitbucket.org:publk/mise.git --yes`. This clones
+   `mise bootstrap --adopt <config-repo> --yes`. This clones
    the config into `~/.config/mise`, then applies packages, repos, tools and the
    `bootstrap` task.
 
@@ -49,7 +49,7 @@ Bitwarden vault.
 - A Bitwarden account with two secure notes:
   - `mise-bootstrap-private-ssh-key`
   - `mise-bootstrap-public-ssh-key`
-- SSH read access to `bitbucket.org:publk/mise`.
+- SSH read access to the config repository passed to `--adopt`.
 
 ## Known caveats
 
@@ -59,9 +59,9 @@ Bitwarden vault.
   `GIT_SSH_COMMAND="ssh -i ~/.ssh/mise_private_key -o IdentitiesOnly=yes"` and
   `MISE_AGE_SSH_IDENTITY_FILES=~/.ssh/mise_private_key`, or use a default key
   name.
-- On a fresh machine, `bitbucket.org` is not yet in `~/.ssh/known_hosts`, so
+- On a fresh machine, the git host is not yet in `~/.ssh/known_hosts`, so
   the clone stops at the host-key prompt. Add it first (for example with
-  `ssh-keyscan`, then check the fingerprint against Bitbucket's published one).
+  `ssh-keyscan`, then check the fingerprint against the host's published one).
 - `mise bootstrap` is experimental; the script turns it on with
   `MISE_EXPERIMENTAL=1`.
 - Config changes take effect only after they are pushed, because `--adopt`
