@@ -1,0 +1,78 @@
+# Powerlevel10k "rainbow" colours (ANSI 256 indices, follow terminal theme).
+# os=7 grey, dir=4 blue, git=2 green, k8s=5 magenta, status=1 red, duration=3 yellow, time=7 grey
+
+format = """\
+[](fg:7)\
+[󰀵 ](bg:7 fg:0)\
+[](fg:7 bg:4)\
+$directory\
+[](fg:4 bg:2)\
+$git_branch\
+$git_status\
+$git_metrics\
+[](fg:2)\
+$fill\
+$status\
+$cmd_duration\
+$time
+$character"""
+
+right_format = "$kubernetes"
+
+[fill]
+symbol = " "
+
+[directory]
+format = "[ ﱮ $path ]($style)"
+style = "fg:254 bg:4"
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "  "
+style = "fg:0 bg:2"
+
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = "fg:0 bg:2"
+
+[git_metrics]
+format = "([+$added]($added_style))([-$deleted]($deleted_style))[ ](bg:2)"
+added_style = "fg:0 bg:2"
+deleted_style = "fg:1 bg:2"
+disabled = false
+
+[status]
+disabled = false
+format = "[](fg:1)[ ✘ $status ]($style)[](fg:1)"
+style = "fg:0 bg:1"
+
+[cmd_duration]
+min_time = 2000
+format = "[](fg:3)[ 󱎫 $duration ]($style)[](fg:3)"
+style = "fg:0 bg:3"
+
+[time]
+disabled = false
+time_format = "%R"
+format = "[](fg:7)[ 󱑍 $time ]($style)[](fg:7)"
+style = "fg:0 bg:7"
+
+[character]
+success_symbol = '[❯](bold 2)'
+error_symbol = '[❯](bold 1)'
+
+[kubernetes]
+disabled = false
+symbol = "󱃾 "
+style = "fg:7 bg:5"
+format = '[](fg:5)[ $symbol$context( \($namespace\)) ]($style)[](fg:5)'
+
+[[kubernetes.contexts]]
+context_pattern = "prod"
+style = "fg:7 bg:1"
+
+[[kubernetes.contexts]]
+context_pattern = "rancher-desktop"
+context_alias = "rancher"

@@ -1,0 +1,174 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Powerlevel10k "rainbow" style, Tokyo Night colours.
+# ╭─ os > dir > git                              toolchains < docker < status < duration < time
+# ╰─❯
+
+palette = "tokyo_night"
+add_newline = true
+command_timeout = 1000
+
+format = """
+[╭─](fg:overlay0)\
+[](fg:blue)\
+$os\
+$username\
+[](fg:blue bg:pink)\
+$directory\
+[](fg:pink bg:peach)\
+$git_branch\
+$git_status\
+[](fg:peach)\
+$fill\
+$java$gradle$maven$nodejs$bun$python$rust$golang$docker_context$status$cmd_duration$time
+[╰─](fg:overlay0)$character"""
+
+
+[fill]
+symbol = " "
+
+[palettes.tokyo_night]
+flamingo = "#ff757f"
+pink = "#bb9af7"
+mauve = "#7aa2f7"
+red = "#f7768e"
+maroon = "#db4b4b"
+peach = "#ff9e64"
+yellow = "#e0af68"
+green = "#9ece6a"
+teal = "#73daca"
+sky = "#7dcfff"
+sapphire = "#2ac3de"
+blue = "#7aa2f7"
+dimblue = "#565f89"
+text = "#c0caf5"
+overlay0 = "#414868"
+surface0 = "#24283b"
+base = "#1a1b26"
+crust = "#15161e"
+
+[os]
+disabled = false
+style = "bg:blue fg:crust"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Macos = ""
+Linux = ""
+Ubuntu = ""
+Debian = ""
+Windows = ""
+
+[username]
+show_always = false
+style_user = "bg:blue fg:crust"
+style_root = "bg:red fg:crust"
+format = "[$user ]($style)"
+
+[directory]
+style = "bg:pink fg:crust"
+format = "[ $path ]($style)[$read_only]($read_only_style)"
+read_only = " "
+read_only_style = "bg:pink fg:red"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+"source" = " "
+
+[git_branch]
+symbol = ""
+style = "bg:peach fg:crust"
+format = "[ $symbol $branch(:$remote_branch) ]($style)"
+truncation_length = 32
+truncation_symbol = "…"
+
+[git_status]
+style = "bg:peach fg:crust"
+format = "[($all_status$ahead_behind )]($style)"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "*${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[java]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[](fg:sapphire)[ $symbol ($version) ]($style)"
+
+[gradle]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[ $symbol ($version) ]($style)"
+
+[maven]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[ $symbol ($version) ]($style)"
+
+[nodejs]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[](fg:sapphire)[ $symbol ($version) ]($style)"
+
+[bun]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[ $symbol ($version) ]($style)"
+
+[python]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[](fg:sapphire)[ $symbol ($version)( $virtualenv) ]($style)"
+
+[rust]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[](fg:sapphire)[ $symbol ($version) ]($style)"
+
+[golang]
+symbol = ""
+style = "bg:sapphire fg:crust"
+format = "[](fg:sapphire)[ $symbol ($version) ]($style)"
+
+[docker_context]
+symbol = ""
+style = "bg:teal fg:crust"
+format = "[](fg:teal)[ $symbol $context ]($style)"
+only_with_files = true
+
+[status]
+disabled = false
+style = "bg:red fg:crust"
+symbol = "✘"
+success_symbol = ""
+format = "[](fg:red)[ $symbol $status ]($style)"
+map_symbol = false
+
+[cmd_duration]
+min_time = 2000
+style = "bg:yellow fg:crust"
+format = "[](fg:yellow)[ 󱎫 $duration ]($style)"
+show_milliseconds = false
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:dimblue fg:text"
+format = "[](fg:dimblue)[  $time ]($style)"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold mauve)"

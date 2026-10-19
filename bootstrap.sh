@@ -4,7 +4,18 @@ set -euo pipefail
 # `--adopt` git-clones the repo *into* ~/.config/mise, and hard-errors if that
 # dir already exists and is not a git checkout. So nothing below may create it
 # before the adopt in phase 2.
-rm -rf ~/.config/mise/
+#
+# On a re-run that dir is the live checkout, so refuse to wipe it while it holds
+# uncommitted or unpushed work -- adopt re-clones from GitHub and it would be lost.
+MISE_DIR="$HOME/.config/mise"
+if [ -d "$MISE_DIR/.git" ] && command -v git >/dev/null 2>&1; then
+  if [ -n "$(git -C "$MISE_DIR" status --porcelain)" ] ||
+     [ -n "$(git -C "$MISE_DIR" log --branches --not --remotes --oneline)" ]; then
+    echo "FATAL: $MISE_DIR has uncommitted or unpushed changes; push or stash them first" >&2
+    exit 1
+  fi
+fi
+rm -rf "$MISE_DIR"
 
 # --- install mise -----------------------------------------------------------
 curl -fsSL https://mise.run | sh

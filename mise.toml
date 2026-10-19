@@ -56,10 +56,10 @@ VISUAL = "nvim"
 # Applied by `mise activate` on directory entry (bash/zsh/fish only).
 
 [shell_alias]
-ll = "eza -lah --group-directories-first --icons --git"
-la = "eza -a --icons"
-lt = "eza --tree --level=2 --icons"
-ls = "eza --icons"
+ll = "eza -lah --group-directories-first --icons=auto --git"
+la = "eza -a --icons=auto"
+lt = "eza --tree --level=2 --icons=auto"
+ls = "eza --icons=auto"
 g = "git"
 gs = "git status -sb"
 gl = "git log --oneline --graph --decorate -20"
@@ -118,7 +118,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'   # case-insensitive
 zstyle ':completion:*' menu no                            # fzf-tab draws the menu
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':fzf-tab:*' fzf-flags --height=40%
-zstyle ':fzf-tab:complete:(cd|z|zi):*' fzf-preview 'eza -1 --icons --color=always $realpath'
+zstyle ':fzf-tab:complete:(cd|z|zi):*' fzf-preview 'eza -1 --icons=always --color=always $realpath'
 
 # fzf keybindings: ctrl+t files, alt+c dirs (ctrl+r is replaced by atuin below)
 command -v fzf >/dev/null && source <(fzf --zsh)
@@ -175,7 +175,6 @@ adopt = true
 "brew:atuin" = { os = ["macos"] }
 "brew:avivsinai/tap/bitbucket-cli" = { os = ["macos"] }
 "brew:bat" = { os = ["macos"] }
-"brew:bitwarden-cli" = { os = ["macos"] }
 "brew:cmake" = { os = ["macos"] }
 "brew:docker" = { os = ["macos"] }
 "brew:docker-buildx" = { os = ["macos"] }
@@ -192,7 +191,6 @@ adopt = true
 "brew:helm" = { os = ["macos"] }
 "brew:imagemagick" = { os = ["macos"] }
 "brew:istioctl" = { os = ["macos"] }
-"brew:jenv" = { os = ["macos"] }
 "brew:just" = { os = ["macos"] }
 "brew:kotlin" = { os = ["macos"] }
 "brew:kubectx" = { os = ["macos"] }

@@ -1,0 +1,160 @@
+# Dracula, powerlevel10k rainbow layout, rounded caps.
+# left: os > [ssh host] > dir > git(+state)   right: toolchains docker jobs sudo status duration battery time
+# RPROMPT: kubernetes
+
+format = """\
+[](fg:#6272a4)\
+[󰀵 ](bg:#6272a4 fg:#282a36)\
+[](fg:#6272a4)\
+$hostname\
+[](fg:#bd93f9)\
+$directory\
+[](fg:#bd93f9)\
+$git_branch\
+$git_status\
+$git_state\
+$git_metrics\
+$fill\
+$java\
+$gradle\
+$maven\
+$nodejs\
+$python\
+$docker_context\
+$jobs\
+$sudo\
+$status\
+$cmd_duration\
+$battery\
+$time
+$character"""
+
+right_format = "$kubernetes"
+
+[fill]
+symbol = " "
+
+[hostname]
+ssh_only = true
+format = "[](fg:#ff5555)[ 󰢹 $hostname ]($style)[](fg:#ff5555)"
+style = "fg:#f8f8f2 bg:#ff5555"
+
+[directory]
+format = "[  $path ]($style)"
+style = "fg:#f8f8f2 bg:#bd93f9"
+truncation_length = 0
+truncate_to_repo = false
+
+[git_branch]
+format = '[](fg:#50fa7b)[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "  "
+style = "fg:#282a36 bg:#50fa7b"
+
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = "fg:#282a36 bg:#50fa7b"
+
+[git_state]
+format = '[ \($state( $progress_current/$progress_total)\)]($style)'
+style = "fg:#ff5555 bg:#50fa7b"
+rebase = "REBASING"
+merge = "MERGING"
+revert = "REVERTING"
+cherry_pick = "CHERRY-PICK"
+bisect = "BISECTING"
+am = "AM"
+am_or_rebase = "AM/REBASE"
+
+[git_metrics]
+format = "([+$added]($added_style))([-$deleted]($deleted_style))[ ](bg:#50fa7b)[](fg:#50fa7b)"
+added_style = "fg:#282a36 bg:#50fa7b"
+deleted_style = "fg:#ff5555 bg:#50fa7b"
+disabled = false
+
+[java]
+symbol = ""
+format = "[](fg:#ffb86c)[ $symbol ($version) ]($style)[](fg:#ffb86c)"
+style = "fg:#282a36 bg:#ffb86c"
+
+[gradle]
+symbol = ""
+format = "[](fg:#ffb86c)[ $symbol ($version) ]($style)[](fg:#ffb86c)"
+style = "fg:#282a36 bg:#ffb86c"
+
+[maven]
+symbol = ""
+format = "[](fg:#ffb86c)[ $symbol ($version) ]($style)[](fg:#ffb86c)"
+style = "fg:#282a36 bg:#ffb86c"
+
+[nodejs]
+symbol = ""
+format = "[](fg:#8be9fd)[ $symbol ($version) ]($style)[](fg:#8be9fd)"
+style = "fg:#282a36 bg:#8be9fd"
+
+[python]
+symbol = ""
+format = "[](fg:#f1fa8c)[ $symbol ($version)( $virtualenv) ]($style)[](fg:#f1fa8c)"
+style = "fg:#282a36 bg:#f1fa8c"
+
+[docker_context]
+symbol = ""
+only_with_files = true
+format = "[](fg:#8be9fd)[ $symbol $context ]($style)[](fg:#8be9fd)"
+style = "fg:#282a36 bg:#8be9fd"
+
+[jobs]
+symbol = "✦"
+number_threshold = 1
+symbol_threshold = 1
+format = "[](fg:#ff79c6)[ $symbol $number ]($style)[](fg:#ff79c6)"
+style = "fg:#282a36 bg:#ff79c6"
+
+[sudo]
+disabled = false
+symbol = "󰌾"
+format = "[](fg:#ffb86c)[ $symbol ]($style)[](fg:#ffb86c)"
+style = "fg:#282a36 bg:#ffb86c"
+
+[status]
+disabled = false
+format = "[](fg:#ff5555)[ ✘ $status ]($style)[](fg:#ff5555)"
+style = "fg:#f8f8f2 bg:#ff5555"
+
+[cmd_duration]
+min_time = 2000
+format = "[](fg:#f1fa8c)[ 󱎫 $duration ]($style)[](fg:#f1fa8c)"
+style = "fg:#282a36 bg:#f1fa8c"
+
+[battery]
+full_symbol = "󰁹"
+charging_symbol = "󰂄"
+discharging_symbol = "󰂃"
+format = "[](fg:#ff5555)[ $symbol $percentage ]($style)[](fg:#ff5555)"
+
+[[battery.display]]
+threshold = 20
+style = "fg:#f8f8f2 bg:#ff5555"
+
+[time]
+disabled = false
+time_format = "%R"
+format = "[](fg:#44475a)[ 󱑍 $time ]($style)[](fg:#44475a)"
+style = "fg:#f8f8f2 bg:#44475a"
+
+[character]
+success_symbol = '[❯](bold #50fa7b)'
+error_symbol = '[❯](bold #ff5555)'
+
+[kubernetes]
+disabled = false
+symbol = "󱃾 "
+format = '[](inverted $style)[ $symbol$context( \($namespace\)) ]($style)[](inverted $style)'
+style = "fg:#282a36 bg:#ff79c6"
+
+[[kubernetes.contexts]]
+context_pattern = "prod"
+style = "fg:#282a36 bg:#ff5555"
+
+[[kubernetes.contexts]]
+context_pattern = "rancher-desktop"
+context_alias = "rancher"

@@ -1,5 +1,5 @@
 # Dracula, powerlevel10k rainbow layout, rounded caps.
-# left: os > [ssh host] > dir > git(+state)   right: toolchains docker jobs sudo status duration battery time
+# left: os > [ssh host] > dir > git(+state)   right: toolchains docker jobs status duration battery time
 # RPROMPT: kubernetes (only in k8s projects, or when KUBECONFIG is set)
 #
 # Symlinked to ~/.config/starship.toml by the bootstrap final hook in mise.toml.
@@ -31,7 +31,6 @@ $nodejs\
 $python\
 $docker_context\
 $jobs\
-$sudo\
 $status\
 $cmd_duration\
 $battery\
@@ -103,7 +102,8 @@ disabled = false
 only_detached = true
 tag_disabled = false
 commit_hash_length = 7
-format = '[( $hash$tag)]($style)'
+# Detached HEAD hides git_branch, so this draws the segment's opening cap instead.
+format = '[](fg:#50fa7b)[ $hash$tag]($style)'
 style = "fg:#282a36 bg:#50fa7b"
 
 [package]
@@ -159,9 +159,6 @@ number_threshold = 1
 symbol_threshold = 1
 format = "[](fg:#ff79c6)[ $symbol $number ]($style)[](fg:#ff79c6)"
 style = "fg:#282a36 bg:#ff79c6"
-
-[sudo]
-disabled = true
 
 [status]
 disabled = false

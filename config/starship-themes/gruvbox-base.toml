@@ -1,0 +1,78 @@
+# Gruvbox Dark, powerlevel10k rainbow layout, rounded caps.
+# bg0=#282828 fg=#ebdbb2 | os=#a89984 dir=#458588 git=#98971a status=#cc241d duration=#d79921 time=#504945 k8s=#b16286
+
+format = """\
+[](fg:#a89984)\
+[󰀵 ](bg:#a89984 fg:#1d2021)\
+[](fg:#a89984 bg:#458588)\
+$directory\
+[](fg:#458588 bg:#98971a)\
+$git_branch\
+$git_status\
+$git_metrics\
+[](fg:#98971a)\
+$fill\
+$status\
+$cmd_duration\
+$time
+$character"""
+
+right_format = "$kubernetes"
+
+[fill]
+symbol = " "
+
+[directory]
+format = "[  $path ]($style)"
+style = "fg:#fbf1c7 bg:#458588"
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "  "
+style = "fg:#1d2021 bg:#98971a"
+
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = "fg:#1d2021 bg:#98971a"
+
+[git_metrics]
+format = "([+$added]($added_style))([-$deleted]($deleted_style))[ ](bg:#98971a)"
+added_style = "fg:#1d2021 bg:#98971a"
+deleted_style = "fg:#9d0006 bg:#98971a"
+disabled = false
+
+[status]
+disabled = false
+format = "[](fg:#cc241d)[ ✘ $status ]($style)[](fg:#cc241d)"
+style = "fg:#fbf1c7 bg:#cc241d"
+
+[cmd_duration]
+min_time = 2000
+format = "[](fg:#d79921)[ 󱎫 $duration ]($style)[](fg:#d79921)"
+style = "fg:#1d2021 bg:#d79921"
+
+[time]
+disabled = false
+time_format = "%R"
+format = "[](fg:#504945)[ 󱑍 $time ]($style)[](fg:#504945)"
+style = "fg:#ebdbb2 bg:#504945"
+
+[character]
+success_symbol = '[❯](bold #b8bb26)'
+error_symbol = '[❯](bold #fb4934)'
+
+[kubernetes]
+disabled = false
+symbol = "󱃾 "
+style = "fg:#fbf1c7 bg:#b16286"
+format = '[](fg:#b16286)[ $symbol$context( \($namespace\)) ]($style)[](fg:#b16286)'
+
+[[kubernetes.contexts]]
+context_pattern = "prod"
+style = "fg:#fbf1c7 bg:#cc241d"
+
+[[kubernetes.contexts]]
+context_pattern = "rancher-desktop"
+context_alias = "rancher"
